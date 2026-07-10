@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Explorer — NASA APOD</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">🚀 Space Explorer</div>
+        <ul class="nav-links">
+            <li><a href="/" class="active">Today</a></li>
+            <li><a href="/gallery">Gallery</a></li>
+            <li><a href="/favourites">Favourites</a></li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="/stats">Stats</a></li>
+        </ul>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        {% if apod %}
+            <p class="apod-date">📅 {{ apod.date }} &nbsp;·&nbsp; Astronomy Picture of the Day</p>
+            <h1 class="apod-title">{{ apod.title }}</h1>
+
+            <div class="apod-card">
+                {% if apod.media_type == "image" %}
+                    <img src="{{ apod.url }}" alt="{{ apod.title }}" class="apod-image">
+                {% else %}
+                    <iframe src="{{ apod.url }}" class="apod-video" allowfullscreen></iframe>
+                {% endif %}
+
+                <div class="apod-body">
+                    <p class="apod-explanation">{{ apod.explanation }}</p>
+                    <div class="apod-actions">
+                        <a href="{{ apod.url }}" target="_blank" class="btn btn-primary">🔭 View Full Image</a>
+                        {% if apod.id %}
+                            {% if is_fav %}
+                                <span class="btn btn-secondary">❤️ Saved to Favourites</span>
+                            {% else %}
+                                <a href="/add_favourite/{{ apod.id }}" class="btn btn-fav">♡ Add to Favourites</a>
+                            {% endif %}
+                        {% endif %}
+                        <a href="/gallery" class="btn btn-secondary">🖼️ Browse Gallery</a>
+                    </div>
+                </div>
+            </div>
+
+        {% else %}
+            <div class="empty-state">
+                <h2>🌌 Unable to load today's image</h2>
+                <p>Could not connect to NASA. Check your internet and try again.</p>
+                <a href="/" class="btn btn-primary">Try Again</a>
+            </div>
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>Data from <a href="https://api.nasa.gov" target="_blank">NASA APOD API</a> &nbsp;·&nbsp; Built with Python & Flask &nbsp;·&nbsp; Aditya Singh</p>
+    </footer>
+
+</body>
+</html>

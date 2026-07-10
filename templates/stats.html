@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stats — Space Explorer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">🚀 Space Explorer</div>
+        <ul class="nav-links">
+            <li><a href="/">Today</a></li>
+            <li><a href="/gallery">Gallery</a></li>
+            <li><a href="/favourites">Favourites</a></li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="/stats" class="active">Stats</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="page-header">
+            <h1>📊 App Stats</h1>
+            <p class="muted">Your Space Explorer usage summary</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🌌</div>
+                <div class="stat-number">{{ stats.total_apods }}</div>
+                <div class="stat-label">Total APODs Saved</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">❤️</div>
+                <div class="stat-number">{{ stats.total_favs }}</div>
+                <div class="stat-label">Favourites Saved</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🔍</div>
+                <div class="stat-number">
+                    {% if stats.top_search %}
+                        "{{ stats.top_search.keyword }}"
+                    {% else %}
+                        —
+                    {% endif %}
+                </div>
+                <div class="stat-label">Most Searched Keyword</div>
+            </div>
+        </div>
+
+        <div class="stats-actions">
+            <a href="/gallery" class="btn btn-primary">🖼️ Browse Gallery</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search APODs</a>
+            <a href="/favourites" class="btn btn-fav">❤️ My Favourites</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>Data from <a href="https://api.nasa.gov" target="_blank">NASA APOD API</a> &nbsp;·&nbsp; Built with Python & Flask &nbsp;·&nbsp; Aditya Singh</p>
+    </footer>
+
+</body>
+</html>
