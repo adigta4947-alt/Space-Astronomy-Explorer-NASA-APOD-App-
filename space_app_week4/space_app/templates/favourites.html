@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favourites — Space Explorer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">🚀 Space Explorer</div>
+        <ul class="nav-links">
+            <li><a href="/">Today</a></li>
+            <li><a href="/gallery">Gallery</a></li>
+            <li><a href="/favourites" class="active">Favourites</a></li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="/stats">Stats</a></li>
+        </ul>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        <div class="page-header">
+            <h1>❤️ My Favourites</h1>
+            <p class="muted">Your saved NASA astronomy pictures</p>
+        </div>
+
+        {% if favs %}
+            <div class="gallery-grid">
+                {% for fav in favs %}
+                    <div class="gallery-card">
+                        {% if fav.media_type == "image" %}
+                            <img src="{{ fav.url }}" alt="{{ fav.title }}" class="gallery-img" loading="lazy">
+                        {% else %}
+                            <div class="gallery-video-placeholder">
+                                📹
+                                <span>Video APOD</span>
+                            </div>
+                        {% endif %}
+                        <div class="gallery-info">
+                            <p class="apod-date">{{ fav.date }}</p>
+                            <h3 class="gallery-title">{{ fav.title }}</h3>
+                            <p class="saved-at">Saved on {{ fav.saved_at[:10] }}</p>
+                            <div class="gallery-actions">
+                                {% if fav.media_type == "image" %}
+                                    <a href="{{ fav.url }}" target="_blank" class="btn btn-secondary btn-sm">🔭 View</a>
+                                {% endif %}
+                                <a href="/remove_favourite/{{ fav.id }}"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Remove from favourites?')">🗑️ Remove</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h2>💫 No favourites yet</h2>
+                <p>Go to the Gallery and save pictures you love!</p>
+                <a href="/gallery" class="btn btn-primary">Browse Gallery</a>
+            </div>
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>Data from <a href="https://api.nasa.gov" target="_blank">NASA APOD API</a> &nbsp;·&nbsp; Built with Python & Flask &nbsp;·&nbsp; Aditya Singh</p>
+    </footer>
+
+</body>
+</html>

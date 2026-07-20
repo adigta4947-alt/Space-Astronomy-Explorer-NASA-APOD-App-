@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search — Space Explorer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">🚀 Space Explorer</div>
+        <ul class="nav-links">
+            <li><a href="/">Today</a></li>
+            <li><a href="/gallery">Gallery</a></li>
+            <li><a href="/favourites">Favourites</a></li>
+            <li><a href="/search" class="active">Search</a></li>
+            <li><a href="/stats">Stats</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="page-header">
+            <h1>🔍 Search APODs</h1>
+            <p class="muted">Search through saved NASA pictures by keyword</p>
+        </div>
+
+        <div class="search-box">
+            <form action="/search" method="GET">
+                <input type="text" name="q" placeholder="Try: galaxy, moon, nebula, sun, mars..."
+                       value="{{ keyword }}" class="search-input" autofocus>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+
+        <!-- Suggested keywords -->
+        {% if not keyword %}
+        <div style="margin-bottom: 2rem;">
+            <p class="muted" style="margin-bottom: 0.75rem;">Popular searches:</p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                {% for tag in ['galaxy', 'moon', 'sun', 'nebula', 'mars', 'star', 'light', 'space'] %}
+                <a href="/search?q={{ tag }}" class="btn btn-secondary btn-sm">{{ tag }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if keyword %}
+            <p class="search-result-info muted">
+                {% if results %}
+                    Found <strong>{{ results|length }}</strong> result(s) for "<strong>{{ keyword }}</strong>"
+                {% else %}
+                    No results found for "<strong>{{ keyword }}</strong>"
+                    — try browsing the <a href="/gallery" style="color: var(--accent)">Gallery</a> first to load more pictures
+                {% endif %}
+            </p>
+
+            {% if results %}
+                <div class="gallery-grid">
+                    {% for apod in results %}
+                        <div class="gallery-card">
+                            {% if apod.media_type == "image" %}
+                                <img src="{{ apod.url }}" alt="{{ apod.title }}" class="gallery-img" loading="lazy">
+                            {% else %}
+                                <div class="gallery-video-placeholder">
+                                    📹
+                                    <span>Video APOD</span>
+                                </div>
+                            {% endif %}
+                            <div class="gallery-info">
+                                <p class="apod-date">{{ apod.date }}</p>
+                                <h3 class="gallery-title">{{ apod.title }}</h3>
+                                <div class="gallery-actions">
+                                    <a href="/add_favourite/{{ apod.id }}" class="btn btn-fav btn-sm">❤️ Save</a>
+                                    {% if apod.media_type == "image" %}
+                                        <a href="{{ apod.url }}" target="_blank" class="btn btn-secondary btn-sm">🔭 View</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>Data from <a href="https://api.nasa.gov" target="_blank">NASA APOD API</a> &nbsp;·&nbsp; Built with Python & Flask &nbsp;·&nbsp; Aditya Singh</p>
+    </footer>
+
+</body>
+</html>
